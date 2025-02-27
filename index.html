@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Switch Status</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+    <h2>ESP32 Switch States</h2>
+    <p>Switch 1: <span id="switch1">Loading...</span></p>
+    <p>Switch 2: <span id="switch2">Loading...</span></p>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://yourproject.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        var dbRef = firebase.database().ref("/");
+
+        dbRef.on("value", function(snapshot) {
+            document.getElementById("switch1").innerText = snapshot.val().switch1 ? "ON" : "OFF";
+            document.getElementById("switch2").innerText = snapshot.val().switch2 ? "ON" : "OFF";
+        });
+    </script>
+</body>
+</html>
