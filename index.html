@@ -1,32 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>ESP32 Switch Status</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EV Charger Spot Status</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 2rem;
+    }
+    .spot {
+      display: inline-block;
+      margin: 1rem;
+      padding: 1rem 2rem;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+    .status {
+      font-size: 1.5rem;
+      margin: 1rem 0;
+    }
+    .open {
+      color: green;
+    }
+    .occupied {
+      color: red;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+    }
+  </style>
 </head>
 <body>
-    <h2>ESP32 Switch States</h2>
-    <p>Switch 1: <span id="switch1">Loading...</span></p>
-    <p>Switch 2: <span id="switch2">Loading...</span></p>
+  <h1>EV Charger Spot Status</h1>
 
-    <script>
-        var firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://yourproject.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        firebase.initializeApp(firebaseConfig);
-        var dbRef = firebase.database().ref("/");
+  <div id="spotA" class="spot">
+    <h2>Spot A</h2>
+    <div class="status" id="statusA">Loading...</div>
+    <button onclick="toggleSpot('A')">Toggle</button>
+  </div>
 
-        dbRef.on("value", function(snapshot) {
-            document.getElementById("switch1").innerText = snapshot.val().switch1 ? "ON" : "OFF";
-            document.getElementById("switch2").innerText = snapshot.val().switch2 ? "ON" : "OFF";
-        });
-    </script>
+  <div id="spotB" class="spot">
+    <h2>Spot B</h2>
+    <div class="status" id="statusB">Loading...</div>
+    <button onclick="toggleSpot('B')">Toggle</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // 🔧 REPLACE with your Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const statusA = document.getElementById("statusA");
+    const statusB = document.getElementById("statusB");
+
+    function updateUI(spot, value) {
+      const el = spot === "A" ? statusA : statusB;
+      el.textContent = value.toUpperCase();
+      el.className = `status ${value}`;
+    }
+
+    // Listen to changes in Firebase
+    db.ref("spots/A").on("value", (snap) => updateUI("A", snap.val()));
+    db.ref("spots/B").on("value", (snap) => updateUI("B", snap.val()));
+
+    function toggleSpot(spot) {
+      const ref = db.ref("spots/" + spot);
+      ref.once("value").then((snap) => {
+        const current = snap.val();
+        const newStatus = current === "open" ? "occupied" : "open";
+        ref.set(newStatus);
+      });
+    }
+  </script>
 </body>
 </html>
