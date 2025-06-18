@@ -80,15 +80,16 @@
 
   <script>
     // 🔧 Replace with your Firebase project config
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+ const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "ev-charger-e32d6.firebaseapp.com", // Usually your projectId.firebaseapp.com
+  databaseURL: "https://ev-charger-e32d6-default-rtdb.firebaseio.com", // Matches your RTDB URL
+  projectId: "ev-charger-e32d6",
+  storageBucket: "ev-charger-e32d6.appspot.com", // Or projectId.firebasestorage.app
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  // measurementId: "G-YOUR_MEASUREMENT_ID", // If you enabled Google Analytics
+};
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
