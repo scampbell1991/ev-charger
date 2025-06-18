@@ -21,6 +21,7 @@
       border: 2px solid #ccc;
       border-radius: 10px;
       background-color: #fff;
+      width: 250px;
     }
     .status {
       font-size: 1.5rem;
@@ -32,9 +33,23 @@
     .occupied {
       color: red;
     }
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+    }
     button {
       padding: 0.5rem 1rem;
       font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .open-btn {
+      background-color: #d4f4d4;
+      border: 1px solid #3c8d3c;
+    }
+    .occupied-btn {
+      background-color: #f8d4d4;
+      border: 1px solid #a33c3c;
     }
   </style>
 </head>
@@ -44,13 +59,19 @@
   <div id="spotA" class="spot">
     <h2>Spot A</h2>
     <div class="status" id="statusA">Loading...</div>
-    <button onclick="toggleSpot('A')">Toggle</button>
+    <div class="buttons">
+      <button class="open-btn" onclick="setSpot('A', 'open')">Open</button>
+      <button class="occupied-btn" onclick="setSpot('A', 'occupied')">Occupied</button>
+    </div>
   </div>
 
   <div id="spotB" class="spot">
     <h2>Spot B</h2>
     <div class="status" id="statusB">Loading...</div>
-    <button onclick="toggleSpot('B')">Toggle</button>
+    <div class="buttons">
+      <button class="open-btn" onclick="setSpot('B', 'open')">Open</button>
+      <button class="occupied-btn" onclick="setSpot('B', 'occupied')">Occupied</button>
+    </div>
   </div>
 
   <!-- Firebase SDK -->
@@ -58,7 +79,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
-    // 🔧 REPLACE with your Firebase config
+    // 🔧 Replace with your Firebase project config
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -81,17 +102,11 @@
       el.className = `status ${value}`;
     }
 
-    // Listen to changes in Firebase
     db.ref("spots/A").on("value", (snap) => updateUI("A", snap.val()));
     db.ref("spots/B").on("value", (snap) => updateUI("B", snap.val()));
 
-    function toggleSpot(spot) {
-      const ref = db.ref("spots/" + spot);
-      ref.once("value").then((snap) => {
-        const current = snap.val();
-        const newStatus = current === "open" ? "occupied" : "open";
-        ref.set(newStatus);
-      });
+    function setSpot(spot, status) {
+      db.ref("spots/" + spot).set(status);
     }
   </script>
 </body>
